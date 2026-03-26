@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
 import cookieParser from "cookie-parser";
+import { errorHandler } from "../utils/error.js";
 
 const createToken = (id) => {
   const token = jwt.sign({ id: id }, process.env.SECRETKEY, {
@@ -17,9 +18,10 @@ const signup = async (req, res, next) => {
     const { username, email, password } = req.body;
     const newUser = new User({ username, email, password });
     await newUser.save();
-    return res.status(201).json(newUser);
+    const { password: hashedpassword, ...rest } = newUser._doc;
+    return res.status(201).json(rest);
   } catch (error) {
-    next(error);
+    next(errorHandler(error));
   }
 };
 const signin = async (req, res, next) => {
@@ -37,12 +39,12 @@ const signin = async (req, res, next) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: true,
-      maxAge:  1 * 60 * 60 *1000 ,
+      maxAge: 1 * 60 * 60 * 1000,
     });
     const { password: hashedpassword, ...rest } = findedUser._doc;
     return res.status(200).json(rest);
   } catch (error) {
-    next(error);
+    next(errorHandler(error));
   }
 };
 

@@ -1,12 +1,18 @@
 import { useState } from "react";
-import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Link, useNavigate } from "react-router-dom";
-
+import { loginUser } from "../features/user/userSlice";
+import { useSelector, useDispatch } from "react-redux";
 function Signin() {
   const [form, setForm] = useState({});
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
+  const isLoading = useSelector((state) => {
+    return state.userReducer.loading;
+  });
+  const error = useSelector((state) => {
+    return state.userReducer.error;
+  });
+
   const navigate = useNavigate();
   const handleChange = (e) => {
     setForm({ ...form, [e.target.id]: e.target.value });
@@ -14,23 +20,12 @@ function Signin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setIsLoading(true);
-    setError(null);
-    try {
-      const result = await axios.post(
-        `${import.meta.env.VITE_API_URL}/auth/signin`,
-        form,
-      );
-      if (result.status == 200) {
-        console.log(result.statusText);
-        navigate("/");
-      }
-    } catch (err) {
-      setError(err.response?.data.message);
-    } finally {
-      setIsLoading(false);
+    const result = await dispatch(loginUser(form));
+    if (loginUser.fulfilled.match(result)) {
+      navigate("/");
     }
   };
+
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl text-center font-semibold my-7">Sign In</h1>
@@ -63,7 +58,13 @@ function Signin() {
           <span className="text-blue-500 hover:opacity-80">Sign up</span>
         </Link>
       </div>
-      <div>{error && <p className="text-red-500 mt-5">{error}</p>}</div>
+      <div>
+        {error && (
+          <p className="text-red-500 mt-5">
+            {error.email || error.password || error.invalid}
+          </p>
+        )}
+      </div>
     </div>
   );
 }
