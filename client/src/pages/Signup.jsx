@@ -7,10 +7,10 @@ import { useSelector, useDispatch } from "react-redux";
 function Signup() {
   const [form, setForm] = useState({});
   const isLoading = useSelector((state) => {
-    return state.userReducer.loading;
+    return state.user.loading;
   });
   const error = useSelector((state) => {
-    return state.userReducer.error;
+    return state.user.error;
   });
   const dispatch = useDispatch();
 
@@ -22,6 +22,7 @@ function Signup() {
     e.preventDefault();
 
     const result = await dispatch(createUser(form));
+    console.log(result);
     if (createUser.fulfilled.match(result)) {
       navigate("/");
     }

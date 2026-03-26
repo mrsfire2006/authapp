@@ -7,10 +7,10 @@ function Signin() {
   const [form, setForm] = useState({});
   const dispatch = useDispatch();
   const isLoading = useSelector((state) => {
-    return state.userReducer.loading;
+    return state.user.loading;
   });
   const error = useSelector((state) => {
-    return state.userReducer.error;
+    return state.user.error;
   });
 
   const navigate = useNavigate();

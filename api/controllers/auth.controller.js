@@ -19,6 +19,12 @@ const signup = async (req, res, next) => {
     const newUser = new User({ username, email, password });
     await newUser.save();
     const { password: hashedpassword, ...rest } = newUser._doc;
+    const token = createToken(newUser._id);
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      maxAge: 1 * 60 * 60 * 1000,
+    });
     return res.status(201).json(rest);
   } catch (error) {
     next(errorHandler(error));
