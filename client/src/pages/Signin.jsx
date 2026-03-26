@@ -1,9 +1,71 @@
-import React from 'react'
+import { useState } from "react";
+import axios from "axios";
+import CircularProgress from "@mui/material/CircularProgress";
+import { Link, useNavigate } from "react-router-dom";
 
 function Signin() {
+  const [form, setForm] = useState({});
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.id]: e.target.value });
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    setIsLoading(true);
+    setError(null);
+    try {
+      const result = await axios.post(
+        `${import.meta.env.VITE_API_URL}/auth/signin`,
+        form,
+      );
+      if (result.status == 200) {
+        console.log(result.statusText);
+        navigate("/");
+      }
+    } catch (err) {
+      setError(err.response?.data.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
-    <div>Signin</div>
-  )
+    <div className="p-3 max-w-lg mx-auto">
+      <h1 className="text-3xl text-center font-semibold my-7">Sign In</h1>
+      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+        <input
+          type="email"
+          placeholder="Email"
+          id="email"
+          className="bg-slate-100 p-3 rounded-lg"
+          onChange={handleChange}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          id="password"
+          className="bg-slate-100 p-3 rounded-lg"
+          onChange={handleChange}
+        />
+        <button
+          disabled={isLoading}
+          className="bg-slate-700 p-3 disabled:opacity-80 disabled:cursor-auto text-white rounded-lg uppercase hover:opacity-95 cursor-pointer"
+          type="submit"
+        >
+          {isLoading ? <CircularProgress /> : "Sign In"}
+        </button>
+      </form>
+      <div className="flex flex-row gap-5 mt-5">
+        <p>Don&rsquo;t have an account? </p>
+        <Link to="/signup">
+          <span className="text-blue-500 hover:opacity-80">Sign up</span>
+        </Link>
+      </div>
+      <div>{error && <p className="text-red-500 mt-5">{error}</p>}</div>
+    </div>
+  );
 }
 
-export default Signin
+export default Signin;

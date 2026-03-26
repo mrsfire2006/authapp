@@ -37,7 +37,7 @@ const signin = async (req, res, next) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: true,
-      maxAge:  1 * 60 * 60  ,
+      maxAge:  1 * 60 * 60 *1000 ,
     });
     const { password: hashedpassword, ...rest } = findedUser._doc;
     return res.status(200).json(rest);

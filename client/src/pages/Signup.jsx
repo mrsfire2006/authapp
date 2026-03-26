@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
 
@@ -7,7 +7,7 @@ function Signup() {
   const [form, setForm] = useState({});
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-
+  const navigate = useNavigate();
   const handleChange = (e) => {
     setForm({ ...form, [e.target.id]: e.target.value });
   };
@@ -23,6 +23,7 @@ function Signup() {
       );
       if (result.status == 201) {
         console.log(result.statusText);
+        navigate("/");
       }
     } catch (err) {
       setError(err.response?.data.message);
