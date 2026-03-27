@@ -13,7 +13,7 @@ const createToken = (id) => {
   return token;
 };
 const google = async (req, res, next) => {
-  const { name, email, image } = req.body;
+  const { name, email, profilePicture } = req.body;
   try {
     const user = await User.findOne({ email });
     if (user) {
