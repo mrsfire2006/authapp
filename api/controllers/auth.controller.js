@@ -12,7 +12,47 @@ const createToken = (id) => {
   });
   return token;
 };
+const google = async (req, res, next) => {
+  const { name, email, image } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (user) {
+      const token = createToken(user._id);
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: true,
+        maxAge: 1 * 60 * 60 * 1000,
+      });
+      const { password: hashedpassword, ...rest } = user._doc;
+      return res.json(rest);
+    } else {
+      const generatedPassword =
+        Math.random().toString(36).slice(-8) +
+        Math.random().toString(36).slice(-8);
 
+      const newUser = new User({
+        username:
+          name.split(" ").join("").toLowerCase() +
+          Math.floor(Math.random() * 10000).toString(),
+        email: email,
+        password: generatedPassword,
+        profilePicture: image,
+      });
+      await newUser.save();
+
+      const token = createToken(newUser._id);
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: true,
+        maxAge: 1 * 60 * 60 * 1000,
+      });
+      const { password: hashedpassword, ...rest } = newUser._doc;
+      return res.json(rest);
+    }
+  } catch (err) {
+    next(errorHandler(err));
+  }
+};
 const signup = async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
@@ -54,4 +94,4 @@ const signin = async (req, res, next) => {
   }
 };
 
-export { signup, signin };
+export { signup, signin, google };

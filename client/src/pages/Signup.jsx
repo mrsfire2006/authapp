@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import {Link, useNavigate } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
 import { createUser } from "../features/user/userSlice";
 import { useSelector, useDispatch } from "react-redux";
-
+import OAuth from "../components/oAuth";
 function Signup() {
   const [form, setForm] = useState({});
   const isLoading = useSelector((state) => {
@@ -30,7 +30,7 @@ function Signup() {
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl text-center font-semibold my-7">Sign Up</h1>
-      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+      <form className="flex flex-col gap-4 " onSubmit={handleSubmit}>
         <input
           type="text"
           placeholder="Username"
@@ -59,6 +59,7 @@ function Signup() {
         >
           {isLoading ? <CircularProgress /> : "Sign Up"}
         </button>
+        <OAuth />
       </form>
       <div className="flex flex-row gap-5 mt-5">
         <p>Have an account? </p>

@@ -53,6 +53,11 @@ const userSlice = createSlice({
     clearError: (state) => {
       state.error = "";
     },
+    signInSuccess: (state, action) => {
+      state.loading = false;
+      state.error = "";
+      state.currentUser = action.payload;
+    },
   },
   extraReducers(builder) {
     builder
@@ -88,5 +93,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { clearError } = userSlice.actions;
+export const { clearError, signInSuccess } = userSlice.actions;
 export default userSlice.reducer;
