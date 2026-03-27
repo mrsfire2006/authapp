@@ -36,7 +36,7 @@ const google = async (req, res, next) => {
           Math.floor(Math.random() * 10000).toString(),
         email: email,
         password: generatedPassword,
-        profilePicture: image,
+        profilePicture: profilePicture,
       });
       await newUser.save();
 

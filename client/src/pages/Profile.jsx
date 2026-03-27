@@ -75,22 +75,23 @@ function Profile() {
     }
   }, [image]);
 
-  // 4. دالة تحديث الملف الشخصي بالكامل
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
       dispatch(updateUserStart());
 
-      // ملاحظة: هنا يجب أن ترسل الـ formData إلى الـ Backend (Node.js) الخاص بك
-      // سأفترض هنا مثالاً لطلب الـ API:
-      const res = await fetch(`/api/user/update/${currentUser._id}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/user/update/${currentUser._id}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+          credentials: "include",
+        },
+      );
 
       const data = await res.json();
-
+      console.log(data);
       if (data.success === false) {
         dispatch(updateUserFailure(data.message));
         return;
